@@ -29,21 +29,21 @@ SOFTWARE.
 
 // Choose the display you will be using
 // you will also have to uncomment the includes in the main project.
-//#define TVOUT_SCREENS
-#define OLED_128x64_ADAFRUIT_SCREENS
+#define TVOUT_SCREENS
+//#define OLED_128x64_ADAFRUIT_SCREENS
 
 // u8glib has performance issues.
 //#define OLED_128x64_U8G_SCREENS
 
 // this will be displayed on the screensaver.
 // Up to 10 letters
-#define CALL_SIGN "CALL SIGN"
+#define CALL_SIGN "codeMonkey"
 
 // Feature Togglels
-#define USE_DIVERSITY
-#define USE_IR_EMITTER
+//#define USE_DIVERSITY
+//#define USE_IR_EMITTER
 //#define USE_FLIP_SCREEN
-#define USE_BOOT_LOGO
+//#define USE_BOOT_LOGO
 
 // Receiver Module version
 // used for tuning time

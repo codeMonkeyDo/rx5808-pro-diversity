@@ -137,6 +137,13 @@ char call_sign[10];
 bool settings_beeps = true;
 bool settings_orderby_channel = true;
 
+void beepAndWait(uint16_t beepPeriod=50, unsigned long delayPeriod=KEY_DEBOUNCE)
+{
+  beep(beepPeriod);
+  delay(delayPeriod);
+}
+
+
 // SETUP ----------------------------------------------------------------------------
 void setup()
 {
@@ -266,10 +273,8 @@ void loop()
     if (digitalRead(buttonMode) == LOW) // key pressed ?
     {
         time_screen_saver=0;
-        beep(50); // beep & debounce
-        delay(KEY_DEBOUNCE/2); // debounce
-        beep(50); // beep & debounce
-        delay(KEY_DEBOUNCE/2); // debounce
+        beepAndWait(50, KEY_DEBOUNCE/2);
+        beepAndWait(50, KEY_DEBOUNCE/2);
 
         uint8_t press_time=0;
         // on entry wait for release
@@ -356,10 +361,9 @@ void loop()
                     state=state_last_used; // exit to last state on timeout.
                 }
                 in_menu=0; // EXIT
-                beep(KEY_DEBOUNCE/2); // beep & debounce
-                delay(50); // debounce
-                beep(KEY_DEBOUNCE/2); // beep & debounce
-                delay(50); // debounce
+
+                beepAndWait(KEY_DEBOUNCE/2, 50);
+                beepAndWait(KEY_DEBOUNCE/2, 50);
             }
             else // no timeout, must be keypressed
             {
@@ -387,8 +391,8 @@ void loop()
                     menu_id = MAX_MENU;
                 }
                 in_menu_time_out=50;
-                beep(50); // beep & debounce
-                delay(KEY_DEBOUNCE); // debounce
+
+                beepAndWait();
             }
         } while(in_menu);
         last_state=255; // force redraw of current screen
@@ -492,8 +496,7 @@ void loop()
                 drawScreen.save(state_last_used, channelIndex, pgm_read_word_near(channelFreqTable + channelIndex), call_sign);
                 for (uint8_t loop=0;loop<5;loop++)
                 {
-                    beep(100); // beep
-                    delay(100);
+                    beepAndWait(100, 100);
                 }
                 delay(3000);
                 state=state_last_used; // return to saved function
@@ -565,8 +568,8 @@ void loop()
             if(menu_id < 0) {
                 menu_id = useReceiverB;
             }
-            beep(50); // beep & debounce
-            delay(KEY_DEBOUNCE); // debounce
+
+            beepAndWait();
         }
         while(in_menu);
 
@@ -596,8 +599,7 @@ void loop()
             if( digitalRead(buttonUp) == LOW)        // channel UP
             {
                 time_screen_saver=millis();
-                beep(50); // beep & debounce
-                delay(KEY_DEBOUNCE); // debounce
+                beepAndWait();
                 channelIndex++;
                 channel++;
                 channel > CHANNEL_MAX ? channel = CHANNEL_MIN : false;
@@ -609,8 +611,7 @@ void loop()
             if( digitalRead(buttonDown) == LOW) // channel DOWN
             {
                 time_screen_saver=millis();
-                beep(50); // beep & debounce
-                delay(KEY_DEBOUNCE); // debounce
+                beepAndWait();
                 channelIndex--;
                 channel--;
                 channel < CHANNEL_MIN ? channel = CHANNEL_MAX : false;
@@ -640,8 +641,7 @@ void loop()
                     seek_found=1;
                     time_screen_saver=millis();
                     // beep twice as notice of lock
-                    beep(100);
-                    delay(100);
+                    beepAndWait(100, 100);
                     beep(100);
                 }
                 else
@@ -679,8 +679,7 @@ void loop()
                 else {
                     seek_direction = -1;
                 }
-                beep(50); // beep & debounce
-                delay(KEY_DEBOUNCE); // debounce
+                beepAndWait();
                 force_seek=1;
                 seek_found=0;
                 time_screen_saver=0;
@@ -777,8 +776,7 @@ void loop()
         // new scan possible by press scan
         if (digitalRead(buttonUp) == LOW) // force new full new scan
         {
-            beep(50); // beep & debounce
-            delay(KEY_DEBOUNCE); // debounce
+            beepAndWait();
             last_state=255; // force redraw by fake state change ;-)
             channel=CHANNEL_MIN;
             scan_start=1;
@@ -831,8 +829,7 @@ void loop()
                         for (uint8_t loop=0;loop<10;loop++)
                         {
                             #define RSSI_SETUP_BEEP 25
-                            beep(RSSI_SETUP_BEEP); // beep & debounce
-                            delay(RSSI_SETUP_BEEP); // debounce
+                            beepAndWait(RSSI_SETUP_BEEP, RSSI_SETUP_BEEP);
                         }
                         state=STATE_RSSI_SETUP;
                         break;
@@ -903,10 +900,8 @@ void loop()
         {
             first_tune=0;
             #define UP_BEEP 100
-            beep(UP_BEEP);
-            delay(UP_BEEP);
-            beep(UP_BEEP);
-            delay(UP_BEEP);
+            beepAndWait(UP_BEEP, UP_BEEP);
+            beepAndWait(UP_BEEP, UP_BEEP);            
             beep(UP_BEEP);
         }
     }
@@ -960,6 +955,7 @@ uint16_t readRSSI()
 #ifdef USE_DIVERSITY
     return readRSSI(-1);
 }
+
 uint16_t readRSSI(char receiver)
 {
 #endif
@@ -1086,9 +1082,9 @@ void setReceiver(uint8_t receiver) {
 #ifdef USE_IR_EMITTER
 void sendIRPayload() {
     // beep twice before transmitting.
+    beepAndWait(100, 100);
     beep(100);
-    delay(100);
-    beep(100);
+
     uint8_t check_sum = 2;
     Serial.write(2); // start of payload STX
     check_sum += channelIndex;
